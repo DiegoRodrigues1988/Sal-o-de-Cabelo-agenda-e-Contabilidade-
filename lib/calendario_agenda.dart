@@ -175,18 +175,12 @@ class _CalendarioAgendaPageState extends State<CalendarioAgendaPage> {
     final eventosDoDia = _getEventsForDay(_selectedDay!);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Agenda', style: TextStyle(color: theme.hintColor)),
-        backgroundColor: theme.primaryColor,
-        // --- MUDANÇA AQUI: Botão de adicionar movido para a AppBar ---
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add_circle, color: theme.hintColor, size: 30),
-            onPressed: _mostrarDialogoDeAdicionarEvento,
-          ),
-        ],
+      // A AppBar foi removida daqui
+      floatingActionButton: FloatingActionButton(
+        onPressed: _mostrarDialogoDeAdicionarEvento,
+        backgroundColor: theme.hintColor,
+        child: const Icon(Icons.add, color: Colors.black),
       ),
-      // O FloatingActionButton foi removido daqui
       body: Column(
         children: [
           TableCalendar<Evento>(

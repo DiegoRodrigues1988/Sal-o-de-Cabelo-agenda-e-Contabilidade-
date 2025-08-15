@@ -111,17 +111,11 @@ class _ContabilPageState extends State<ContabilPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(
-        // --- MUDANÇA AQUI ---
-        title: Text('Caixa', style: TextStyle(color: theme.hintColor)),
-        backgroundColor: theme.primaryColor,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add_circle, color: theme.hintColor, size: 30),
-            onPressed: _mostrarDialogoDeAdicionarTransacao,
-          ),
-        ],
+      // A AppBar foi removida daqui
+      floatingActionButton: FloatingActionButton(
+        onPressed: _mostrarDialogoDeAdicionarTransacao,
+        backgroundColor: theme.hintColor,
+        child: const Icon(Icons.add, color: Colors.black),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('transacoes').orderBy('data', descending: true).snapshots(),

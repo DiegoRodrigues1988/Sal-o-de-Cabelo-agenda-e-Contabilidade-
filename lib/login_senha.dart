@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'home_page.dart';
+import 'home_page.dart'; // A linha que faltava
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -110,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Text(
-                'Glamour Studio',
+                'Salão de Cabelo',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 40),
               ),
@@ -137,8 +137,6 @@ class _LoginPageState extends State<LoginPage> {
                   _emailController.text = selection;
                 },
                 fieldViewBuilder: (BuildContext context, TextEditingController fieldController, FocusNode fieldFocusNode, VoidCallback onFieldSubmitted) {
-                  // --- CORREÇÃO AQUI ---
-                  // Garante que o nosso controller principal seja atualizado quando o usuário digita.
                   fieldController.addListener(() {
                     if (_emailController.text != fieldController.text) {
                       _emailController.text = fieldController.text;
