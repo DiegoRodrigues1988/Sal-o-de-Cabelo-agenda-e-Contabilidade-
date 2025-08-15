@@ -19,11 +19,12 @@ dependencies:
   cloud_firestore: ^4.15.8
 
   # UI e Funcionalidades
-  table_calendar: ^3.0.9 # Para a Agenda
-  fl_chart: ^0.66.2      # Para o Gráfico de Contabilidade
-
-  # CORREÇÃO: Versão do intl atualizada para resolver o conflito
+  table_calendar: ^3.0.9
+  fl_chart: ^0.66.2
   intl: ^0.20.2
+
+  # Adicionado para salvar e-mails localmente
+  shared_preferences: ^2.2.3
 
   # Ícones estilo iOS
   cupertino_icons: ^1.0.8

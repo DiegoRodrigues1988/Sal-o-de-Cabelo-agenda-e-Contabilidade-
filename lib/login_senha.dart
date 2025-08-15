@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'home_page.dart'; // Importa a nova tela principal
+import 'package:shared_preferences/shared_preferences.dart';
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,25 +11,44 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Instância do Firebase Authentication
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isLoading = false;
 
-  // Função para mostrar mensagens de erro ou sucesso
-  void _mostrarFeedback(String mensagem) {
+  List<String> _savedEmails = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEmails();
+  }
+
+  Future<void> _loadEmails() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _savedEmails = prefs.getStringList('saved_emails') ?? [];
+    });
+  }
+
+  Future<void> _saveEmail(String email) async {
+    if (!_savedEmails.contains(email)) {
+      _savedEmails.add(email);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList('saved_emails', _savedEmails);
+    }
+  }
+
+  void _mostrarFeedback(String mensagem, {bool isError = true}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(mensagem),
-        backgroundColor: Colors.redAccent,
+        backgroundColor: isError ? Colors.redAccent : Colors.green,
       ),
     );
   }
 
-  // --- FUNÇÃO DE LOGIN COM FIREBASE ---
   Future<void> _login() async {
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       _mostrarFeedback('Por favor, preencha e-mail e senha.');
@@ -36,11 +56,14 @@ class _LoginPageState extends State<LoginPage> {
     }
     setState(() => _isLoading = true);
     try {
+      final email = _emailController.text.trim();
       await _auth.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
+        email: email,
         password: _passwordController.text.trim(),
       );
-      // Navega para a HomePage se o login for bem-sucedido
+
+      await _saveEmail(email);
+
       if (mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const HomePage()),
@@ -55,7 +78,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  // --- FUNÇÃO DE REGISTRO COM FIREBASE ---
   Future<void> _register() async {
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       _mostrarFeedback('Por favor, preencha e-mail e senha para registrar.');
@@ -67,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      _mostrarFeedback('Usuário registrado com sucesso! Por favor, faça o login.');
+      _mostrarFeedback('Usuário registrado com sucesso! Por favor, faça o login.', isError: false);
     } on FirebaseAuthException catch (e) {
       _mostrarFeedback(e.message ?? 'Ocorreu um erro no registro.');
     } finally {
@@ -101,13 +123,37 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 50),
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: Icon(Icons.email_outlined, color: Color(0xFFE0E1DD)),
-                ),
+
+              Autocomplete<String>(
+                optionsBuilder: (TextEditingValue textEditingValue) {
+                  if (textEditingValue.text == '') {
+                    return const Iterable<String>.empty();
+                  }
+                  return _savedEmails.where((String option) {
+                    return option.contains(textEditingValue.text.toLowerCase());
+                  });
+                },
+                onSelected: (String selection) {
+                  _emailController.text = selection;
+                },
+                fieldViewBuilder: (BuildContext context, TextEditingController fieldController, FocusNode fieldFocusNode, VoidCallback onFieldSubmitted) {
+                  // --- CORREÇÃO AQUI ---
+                  // Garante que o nosso controller principal seja atualizado quando o usuário digita.
+                  fieldController.addListener(() {
+                    if (_emailController.text != fieldController.text) {
+                      _emailController.text = fieldController.text;
+                    }
+                  });
+                  return TextField(
+                    controller: fieldController,
+                    focusNode: fieldFocusNode,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      prefixIcon: Icon(Icons.email_outlined, color: Color(0xFFE0E1DD)),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 20),
               TextField(

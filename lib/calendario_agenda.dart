@@ -178,12 +178,15 @@ class _CalendarioAgendaPageState extends State<CalendarioAgendaPage> {
       appBar: AppBar(
         title: Text('Agenda', style: TextStyle(color: theme.hintColor)),
         backgroundColor: theme.primaryColor,
+        // --- MUDANÇA AQUI: Botão de adicionar movido para a AppBar ---
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add_circle, color: theme.hintColor, size: 30),
+            onPressed: _mostrarDialogoDeAdicionarEvento,
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _mostrarDialogoDeAdicionarEvento,
-        backgroundColor: theme.hintColor,
-        child: const Icon(Icons.add, color: Colors.black),
-      ),
+      // O FloatingActionButton foi removido daqui
       body: Column(
         children: [
           TableCalendar<Evento>(
@@ -249,8 +252,6 @@ class _CalendarioAgendaPageState extends State<CalendarioAgendaPage> {
                     ),
                     title: Text(evento.cliente, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                     subtitle: Text(evento.titulo, style: const TextStyle(color: Color(0xFFE0E1DD))),
-                    // --- MUDANÇA AQUI ---
-                    // Trocado o toque longo por um botão de excluir
                     trailing: IconButton(
                       icon: Icon(Icons.delete_outline, color: Colors.red[200]),
                       onPressed: () => _mostrarDialogoDeRemoverEvento(evento),

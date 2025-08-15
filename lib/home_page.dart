@@ -12,7 +12,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  // Adicionado 'const' para melhorar a performance
   static final List<Widget> _widgetOptions = <Widget>[
     const CalendarioAgendaPage(),
     const ContabilPage(),
@@ -39,7 +38,8 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart),
-            label: 'Contabilidade',
+            // --- MUDANÇA AQUI ---
+            label: 'Caixa',
           ),
         ],
         currentIndex: _selectedIndex,

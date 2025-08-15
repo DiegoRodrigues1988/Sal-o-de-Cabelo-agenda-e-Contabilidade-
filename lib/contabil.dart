@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import 'dart:math';
 
 class ContabilPage extends StatefulWidget {
   const ContabilPage({super.key});
@@ -11,12 +12,10 @@ class ContabilPage extends StatefulWidget {
 }
 
 class _ContabilPageState extends State<ContabilPage> {
-  // --- FUNÇÃO PARA REMOVER UMA TRANSAÇÃO ---
   Future<void> _removerTransacao(String docId) async {
     await FirebaseFirestore.instance.collection('transacoes').doc(docId).delete();
   }
 
-  // --- DIÁLOGO DE CONFIRMAÇÃO PARA REMOVER ---
   void _mostrarDialogoDeRemoverTransacao(String docId, String descricao) {
     showDialog(
       context: context,
@@ -113,14 +112,16 @@ class _ContabilPageState extends State<ContabilPage> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Contabilidade', style: TextStyle(color: theme.hintColor)),
+        // --- MUDANÇA AQUI ---
+        title: Text('Caixa', style: TextStyle(color: theme.hintColor)),
         backgroundColor: theme.primaryColor,
         elevation: 0,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _mostrarDialogoDeAdicionarTransacao,
-        backgroundColor: theme.hintColor,
-        child: const Icon(Icons.add, color: Colors.black),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add_circle, color: theme.hintColor, size: 30),
+            onPressed: _mostrarDialogoDeAdicionarTransacao,
+          ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('transacoes').orderBy('data', descending: true).snapshots(),
@@ -177,10 +178,11 @@ class _ContabilPageState extends State<ContabilPage> {
                   child: BarChart(
                     BarChartData(
                       alignment: BarChartAlignment.spaceAround,
-                      maxY: (totalEntradas > totalSaidas ? totalEntradas : totalSaidas) * 1.2,
+                      maxY: max(max(totalEntradas, totalSaidas), saldo.abs()) * 1.2,
                       barGroups: [
                         _makeBarGroup(0, totalEntradas, Colors.green),
                         _makeBarGroup(1, totalSaidas, Colors.red),
+                        _makeBarGroup(2, saldo < 0 ? 0 : saldo, theme.hintColor),
                       ],
                       titlesData: FlTitlesData(
                         bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: _bottomTitles)),
@@ -206,8 +208,6 @@ class _ContabilPageState extends State<ContabilPage> {
                       leading: Icon(isEntrada ? Icons.arrow_upward : Icons.arrow_downward, color: isEntrada ? Colors.green : Colors.red),
                       title: Text(data['descricao']),
                       subtitle: Text(DateFormat('dd/MM/yyyy').format((data['data'] as Timestamp).toDate())),
-                      // --- MUDANÇA AQUI ---
-                      // Adicionado um Row para ter o valor e o botão de excluir
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -275,6 +275,9 @@ class _ContabilPageState extends State<ContabilPage> {
         break;
       case 1:
         text = 'Saídas';
+        break;
+      case 2:
+        text = 'Saldo';
         break;
       default:
         text = '';
