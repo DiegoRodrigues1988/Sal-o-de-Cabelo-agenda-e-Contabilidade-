@@ -1,0 +1,38 @@
+name: salao_de_cabelo
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_localizations:
+    sdk: flutter
+
+  # Firebase - Essencial para conectar com o backend
+  firebase_core: ^2.27.0
+  firebase_auth: ^4.17.8
+  cloud_firestore: ^4.15.8
+
+  # UI e Funcionalidades
+  table_calendar: ^3.0.9 # Para a Agenda
+  fl_chart: ^0.66.2      # Para o Gráfico de Contabilidade
+
+  # CORREÇÃO: Versão do intl atualizada para resolver o conflito
+  intl: ^0.20.2
+
+  # Ícones estilo iOS
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true

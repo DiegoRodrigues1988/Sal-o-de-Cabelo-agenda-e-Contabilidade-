@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "910310235404",
+    "project_id": "salao-de-cabelo-3b6f7",
+    "storage_bucket": "salao-de-cabelo-3b6f7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:910310235404:android:88982e824fa5e8fa0a7d29",
+        "android_client_info": {
+          "package_name": "com.example.salao_de_cabelo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjCUsju_jcE0ZMuqLhGTl-7kknLipv-pY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
